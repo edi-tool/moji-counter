@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f8f6f2" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#1c1b19" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)">
 
     <title>文字数をすぐ数える（改行・空白を除く）無料ツール | 文字数集計さん</title>
     <meta name="description" content="文章を貼るだけで、文字数・改行を除く文字数・空白と改行を除く文字数がすぐ分かります。絵文字や結合文字も見た目の1文字で数え、上限までの残りも表示。ブラウザ内で完結し、文章は外部に送信しません。">
@@ -61,9 +61,15 @@
     <script type="module" src="src/app.js"></script>
 </head>
 <body>
+<nav class="et-bar" aria-label="現在地">
+  <div class="et-bar-inner">
+    <a class="et-home" href="https://edi-tool.github.io/"><span class="et-mark" aria-hidden="true"></span>edi-tool</a>
+    <svg class="et-sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    <span class="et-current" aria-current="page">文字数集計さん</span>
+  </div>
+</nav>
 <div class="page">
     <header class="site-header">
-        <a class="brand-link" href="https://edi-tool.github.io/">edi-tool</a>
         <h1>文字数集計さん</h1>
         <p class="lead">文章を貼るだけで、文字数がすぐ分かります。</p>
     </header>
