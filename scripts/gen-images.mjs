@@ -1,3 +1,5 @@
+// 【使わない】2026-11-06 から、ファビコンと ogp.png はハブ（edi-tool.github.io）の scripts/ogp/favicon.js・gen.js で全ツール共通に作る。
+// 実行すると古い形で上書きするため、作り直すときはハブ側を使うこと。以下は旧スクリプト（記録として残す）。
 // favicon.png / favicon.ico / ogp.png を生成する開発用スクリプト（本体の依存には含めない）。
 // 使い方: cd tests/e2e && npm ci && cd ../.. && node scripts/gen-images.mjs
 // 見た目はハブ（edi-tool.github.io）の scripts/ogp/gen.js のカード（生成り地・白カード・左のオレンジ帯・アイコン）に合わせる。
