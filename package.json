@@ -1,0 +1,12 @@
+{
+  "name": "moji-counter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "文字数集計さん — 文章を貼るだけで、文字数・改行を除く文字数・空白を除く文字数がすぐ分かるツール",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node scripts/check-static.mjs"
+  },
+  "engines": { "node": ">=22" }
+}

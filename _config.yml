@@ -1,0 +1,15 @@
+url: "https://edi-tool.github.io"
+baseurl: "/moji-counter"
+
+# 開発用ファイルを公開ビルドから外す（Pages で CLAUDE.md などが配信されないように）
+exclude:
+  - CLAUDE.md
+  - AGENTS.md
+  - DESIGN.md
+  - progress.md
+  - README.md
+  - CHANGELOG.md
+  - package.json
+  - scripts/
+  - tests/
+  - docs/
