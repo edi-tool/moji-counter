@@ -59,15 +59,17 @@ test.describe('PC 1280×800', () => {
     await open(page);
     await page.locator('#limit').fill('10');
     await type(page, 'あ'.repeat(7));
-    await expect(page.locator('#limit-status')).toHaveText('✓ あと 3 字');
+    await expect(page.locator('#limit-status')).toHaveText('あと 3 字');
+    await expect(page.locator('#limit-status')).toHaveAttribute('data-icon', 'ok');
     await type(page, 'あ'.repeat(12));
-    await expect(page.locator('#limit-status')).toHaveText('⚠ 2 字オーバー');
+    await expect(page.locator('#limit-status')).toHaveText('2 字オーバー');
+    await expect(page.locator('#limit-status')).toHaveAttribute('data-icon', 'warn');
     await expect(page.locator('#limit-status')).toHaveAttribute('data-state', 'over');
     expect(await page.locator('#limit-status').evaluate((el) => getComputedStyle(el).borderTopWidth)).toBe('2px');
     // 基準を変える（改行を除く）
     await type(page, 'あ\n'.repeat(6));
     await page.locator('#basis').selectOption('noNewline');
-    await expect(page.locator('#limit-status')).toHaveText('✓ あと 4 字');
+    await expect(page.locator('#limit-status')).toHaveText('あと 4 字');
 
     await page.reload();
     await page.locator('html[data-ready="true"]').waitFor();
@@ -83,7 +85,7 @@ test.describe('PC 1280×800', () => {
     await open(page);
     await page.locator('#limit').fill('abc');
     await expect(page.locator('#limit')).toHaveAttribute('aria-invalid', 'true');
-    await expect(page.locator('#limit-status')).toContainText('⚠');
+    await expect(page.locator('#limit-status')).toHaveAttribute('data-icon', 'warn');
   });
 
   test('詳しい集計: 字種・X 換算・原稿用紙。開閉は保存される', async ({ page }) => {
@@ -105,11 +107,13 @@ test.describe('PC 1280×800', () => {
     await expect(page.locator('#details')).toHaveJSProperty('open', true);
   });
 
-  test('コピー: 入力欄の内容がクリップボードに入り、通知される', async ({ page }) => {
+  test('コピー: 入力欄の内容がクリップボードに入り、ボタンの中で知らせて元に戻る', async ({ page }) => {
     await open(page);
     await type(page, 'コピーする文章');
     await page.locator('#btn-copy').click();
-    await expect(page.locator('#toast')).toContainText('コピーしました');
+    await expect(page.locator('#btn-copy')).toHaveText('コピーしました');
+    await expect(page.locator('#et-live')).toHaveText('コピーしました（7 字）');
+    await expect(page.locator('#btn-copy')).toHaveText('コピー', { timeout: 3000 });
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('コピーする文章');
   });
 
@@ -189,7 +193,7 @@ test.describe('PC 1280×800', () => {
     const outline = await page.locator('#btn-copy').evaluate((el) => getComputedStyle(el).outlineWidth);
     expect(outline).toBe('3px');
     await page.keyboard.press('Enter');
-    await expect(page.locator('#toast')).toContainText('コピーしました');
+    await expect(page.locator('#btn-copy')).toContainText('コピーしました');
     await page.keyboard.press('Tab');
     await expect(page.locator('#btn-clear')).toBeFocused();
     await page.keyboard.press('Tab');
@@ -199,10 +203,10 @@ test.describe('PC 1280×800', () => {
   test('ダーク表示: OS 設定に追従し、トークンが切り替わる', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' });
     await open(page);
-    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(28, 27, 25)');
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(11, 11, 12)');
     // アクセント色はコピーボタンだけ
-    expect(await page.locator('#btn-copy').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(242, 140, 6)');
-    expect(await page.locator('#btn-clear').evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe('rgb(242, 140, 6)');
+    expect(await page.locator('#btn-copy').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(255, 106, 0)');
+    expect(await page.locator('#btn-clear').evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe('rgb(255, 106, 0)');
   });
 
   test('PC は 2 カラム: 右の結果パネルがスクロールしても見える', async ({ page }) => {
@@ -239,7 +243,7 @@ test.describe('スマホ 390×844（タッチ）', () => {
 
   test('主要操作のタップ領域は 44px 以上', async ({ page }) => {
     await open(page);
-    for (const sel of ['#btn-copy', '#btn-clear', '#btn-open', '#limit', '#basis', '#details summary', '.brand-link', '.site-footer a']) {
+    for (const sel of ['#btn-copy', '#btn-clear', '#btn-open', '#limit', '#basis', '#details summary', '.et-home', '.site-footer a']) {
       const box = await page.locator(sel).boundingBox();
       expect(box.height, `${sel} height`).toBeGreaterThanOrEqual(43.5);
       expect(box.width, `${sel} width`).toBeGreaterThanOrEqual(43.5);

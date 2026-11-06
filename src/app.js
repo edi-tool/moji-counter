@@ -61,14 +61,16 @@ function renderLimit() {
   if (raw !== '' && limit === null) {
     limitInput.setAttribute('aria-invalid', 'true');
     el.dataset.state = 'over';
-    el.textContent = '⚠ 上限は 0 以上の整数で入力してください。';
+    el.dataset.icon = 'warn';
+    el.textContent = '上限は 0 以上の整数で入力してください。';
     return;
   }
   const s = limitStatus(counts, limit, /** @type {any} */ (basisSelect.value));
   el.dataset.state = s.state;
+  el.dataset.icon = s.state === 'none' ? '' : s.state === 'under' ? 'ok' : 'warn';
   if (s.state === 'none') el.textContent = '上限を入れると、残りの字数が分かります。';
-  else if (s.state === 'under') el.textContent = s.diff === 0 ? '✓ 上限ちょうどです' : `✓ あと ${fmt(s.diff)} 字`;
-  else el.textContent = `⚠ ${fmt(s.diff)} 字オーバー`;
+  else if (s.state === 'under') el.textContent = s.diff === 0 ? '上限ちょうどです' : `あと ${fmt(s.diff)} 字`;
+  else el.textContent = `${fmt(s.diff)} 字オーバー`;
 }
 
 function renderSelection() {
@@ -121,6 +123,27 @@ function showToast(message, action = null, ms = 3000) {
 }
 function hideToast() { $('toast').hidden = true; }
 
+/**
+ * 押したボタンの中で結果を示し、1.5 秒で元に戻す（DESIGN.md「4. 部品」押した結果）
+ * @param {HTMLElement} btn
+ * @param {string} label ボタンに出す短い文
+ * @param {string} [spoken] 読み上げ用の文（省略時は label）
+ */
+function flashDone(btn, label, spoken = label) {
+  if (btn.dataset.label === undefined) btn.dataset.label = btn.innerHTML;
+  btn.innerHTML = '<span class="et-i et-i-check" aria-hidden="true"></span>' + label;
+  btn.classList.add('is-done');
+  let live = document.getElementById('et-live');
+  if (!live) { live = document.createElement('p'); live.id = 'et-live'; live.className = 'et-live'; live.setAttribute('role', 'status'); document.body.append(live); }
+  live.textContent = spoken;
+  clearTimeout(Number(btn.dataset.timer));
+  btn.dataset.timer = String(window.setTimeout(() => {
+    btn.innerHTML = btn.dataset.label ?? '';
+    delete btn.dataset.label;
+    btn.classList.remove('is-done');
+  }, 1500));
+}
+
 /** 入力欄の内容を差し替える（元に戻せるようにトーストで案内） */
 function replaceText(next, message) {
   const before = text.value;
@@ -130,11 +153,13 @@ function replaceText(next, message) {
 }
 
 // ---- 操作 ----
-$('btn-copy').addEventListener('click', async () => {
+$('btn-copy').addEventListener('click', async (ev) => {
+  // await の後では ev.currentTarget が null になるため、先にボタンを取っておく
+  const btn = /** @type {HTMLElement} */ (ev.currentTarget);
   if (!text.value) { showToast('コピーする文章がありません。'); return; }
   try {
     await navigator.clipboard.writeText(text.value);
-    showToast(`コピーしました（${fmt(counts.chars)} 字）`);
+    flashDone(btn, 'コピーしました', `コピーしました（${fmt(counts.chars)} 字）`);
   } catch {
     text.focus();
     text.select();
@@ -159,6 +184,7 @@ fileInput.addEventListener('change', async () => {
 async function openFile(file) {
   const status = $('file-status');
   status.dataset.state = 'ok';
+  status.dataset.icon = '';
   status.textContent = `「${file.name}」を読み込み中…`;
   try {
     const { text: loaded, note } = await readFileText(file);
@@ -167,8 +193,9 @@ async function openFile(file) {
   } catch (e) {
     // 失敗を「0字」に見せない: 入力欄は変えず、失敗として表示する
     status.dataset.state = 'error';
+    status.dataset.icon = 'warn';
     const reason = e instanceof FileReadError ? e.message : 'ファイルを読み取れませんでした。';
-    status.textContent = `⚠ 「${file.name}」を読み込めませんでした。${reason}`;
+    status.textContent = `「${file.name}」を読み込めませんでした。${reason}`;
   }
 }
 

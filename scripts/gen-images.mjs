@@ -17,17 +17,17 @@ const FONT = '"Noto Sans JP","Yu Gothic UI","Yu Gothic","Hiragino Kaku Gothic Pr
 
 const ogpHtml = `<style>
 * { box-sizing: border-box; }
-body { margin: 0; width: 1200px; height: 630px; background: #f8f6f2; font-family: ${FONT}; color: #0f0f0f; }
-.card { position: absolute; inset: 48px; background: #fff; border: 2px solid #e0e0e0; border-radius: 32px; padding: 64px 72px; overflow: hidden; }
-.bar { position: absolute; left: 0; top: 0; bottom: 0; width: 16px; background: #f28c06; }
-.brand { font-size: 30px; font-weight: 700; color: #5f5b54; }
+body { margin: 0; width: 1200px; height: 630px; background: #f5f5f7; font-family: ${FONT}; color: #0f0f0f; }
+.card { position: absolute; inset: 48px; background: #fff; border: 2px solid #e5e5ea; border-radius: 32px; padding: 64px 72px; overflow: hidden; }
+.bar { position: absolute; left: 0; top: 0; bottom: 0; width: 16px; background: #ff6a00; }
+.brand { font-size: 30px; font-weight: 700; color: #52525b; }
 .row { display: flex; align-items: center; gap: 36px; margin-top: 40px; }
-.icon { width: 132px; height: 132px; border-radius: 32px; background: #fff8f0; color: #f28c06; display: flex; align-items: center; justify-content: center; flex: none; }
+.icon { width: 132px; height: 132px; border-radius: 32px; background: #f0f0f3; color: #ff6a00; display: flex; align-items: center; justify-content: center; flex: none; }
 .icon svg { width: 76px; height: 76px; }
 .name { font-size: 84px; font-weight: 700; line-height: 1.15; }
 .tag { font-size: 38px; color: #444; margin-top: 12px; }
 .chips { position: absolute; left: 72px; bottom: 60px; display: flex; gap: 16px; }
-.chip { font-size: 26px; font-weight: 700; color: #9a5200; background: #fff8f0; border: 2px solid #ffd9a8; border-radius: 999px; padding: 8px 24px; }
+.chip { font-size: 26px; font-weight: 700; color: #3f3f46; background: #f0f0f3; border: 2px solid #e5e5ea; border-radius: 999px; padding: 8px 24px; }
 </style>
 <div class="card"><div class="bar"></div>
   <div class="brand">edi-tool</div>
@@ -37,7 +37,7 @@ body { margin: 0; width: 1200px; height: 630px; background: #f8f6f2; font-family
 
 const faviconHtml = (px) => `<style>
 * { margin: 0; } body { width: ${px}px; height: ${px}px; background: transparent; }
-.i { width: ${px}px; height: ${px}px; border-radius: ${px * 0.22}px; background: #f28c06; color: #1a1100; display: flex; align-items: center; justify-content: center; }
+.i { width: ${px}px; height: ${px}px; border-radius: ${px * 0.22}px; background: #ff6a00; color: #0a0a0a; display: flex; align-items: center; justify-content: center; }
 .i svg { width: ${px * 0.6}px; height: ${px * 0.6}px; }
 </style><div class="i">${ICON.replace('stroke-width="2"', 'stroke-width="2.4"')}</div>`;
 
