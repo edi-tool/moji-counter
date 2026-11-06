@@ -1,9 +1,180 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>文字数集計さん</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f8f6f2" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1c1b19" media="(prefers-color-scheme: dark)">
+
+    <title>文字数をすぐ数える（改行・空白を除く）無料ツール | 文字数集計さん</title>
+    <meta name="description" content="文章を貼るだけで、文字数・改行を除く文字数・空白と改行を除く文字数がすぐ分かります。絵文字や結合文字も見た目の1文字で数え、上限までの残りも表示。ブラウザ内で完結し、文章は外部に送信しません。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://edi-tool.github.io/moji-counter/">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="edi-tool">
+    <meta property="og:title" content="文字数をすぐ数える（改行・空白を除く）無料ツール | 文字数集計さん">
+    <meta property="og:description" content="貼るだけで文字数・改行を除く文字数・空白と改行を除く文字数が分かります。ブラウザ内で完結し、文章は送信しません。">
+    <meta property="og:url" content="https://edi-tool.github.io/moji-counter/">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:image" content="https://edi-tool.github.io/moji-counter/ogp.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "@id": "https://edi-tool.github.io/moji-counter/#app",
+            "name": "文字数集計さん",
+            "alternateName": "文字数をすぐ数える無料ツール",
+            "url": "https://edi-tool.github.io/moji-counter/",
+            "description": "文章を貼るだけで、文字数・改行を除く文字数・空白と改行を除く文字数を数えるツール。",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Web",
+            "browserRequirements": "Requires JavaScript",
+            "inLanguage": "ja",
+            "isAccessibleForFree": true,
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+            "image": "https://edi-tool.github.io/moji-counter/ogp.png",
+            "isPartOf": { "@id": "https://edi-tool.github.io/#website" },
+            "publisher": { "@id": "https://edi-tool.github.io/#organization" }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "edi-tool", "item": "https://edi-tool.github.io/" },
+              { "@type": "ListItem", "position": 2, "name": "文字数集計さん", "item": "https://edi-tool.github.io/moji-counter/" }
+            ]
+          }
+        ]
+      }
+    </script>
+    <script type="module" src="src/app.js"></script>
 </head>
-<body><p>準備中</p></body>
+<body>
+<div class="page">
+    <header class="site-header">
+        <a class="brand-link" href="https://edi-tool.github.io/">edi-tool</a>
+        <h1>文字数集計さん</h1>
+        <p class="lead">文章を貼るだけで、文字数がすぐ分かります。</p>
+    </header>
+
+    <noscript><p class="notice">このツールは JavaScript を使います。ブラウザの設定で有効にしてください。</p></noscript>
+
+    <main class="layout">
+        <section class="editor" aria-labelledby="h-input">
+            <label id="h-input" for="text" class="field-label">文章を貼り付け（または入力）</label>
+            <textarea id="text" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="ここに文章を貼り付けると、すぐに数えます。"></textarea>
+
+            <div class="actions">
+                <button type="button" id="btn-copy" class="btn btn-primary">コピー</button>
+                <button type="button" id="btn-clear" class="btn">クリア</button>
+                <button type="button" id="btn-open" class="btn">ファイルを開く</button>
+                <input id="file" type="file" accept=".txt,.text,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+            </div>
+            <p id="file-status" class="file-status" role="status" aria-live="polite"></p>
+            <p class="hint">テキスト（.txt）と Word（.docx）を読み込めます。ここにファイルをドラッグしても開けます。</p>
+        </section>
+
+        <div class="results">
+            <section class="summary" aria-labelledby="h-summary">
+                <h2 id="h-summary" class="visually-hidden">集計結果</h2>
+                <dl class="main-nums">
+                    <div class="num num-main">
+                        <dt>文字数</dt>
+                        <dd id="n-chars" data-k="chars">0</dd>
+                    </div>
+                    <div class="num">
+                        <dt>改行を除く</dt>
+                        <dd id="n-noNewline" data-k="noNewline">0</dd>
+                    </div>
+                    <div class="num">
+                        <dt>空白・改行を除く</dt>
+                        <dd id="n-noSpace" data-k="noSpace">0</dd>
+                    </div>
+                </dl>
+                <p class="sub-nums">
+                    <span>行数 <b data-k="lines">0</b></span>
+                    <span>段落数 <b data-k="paragraphs">0</b></span>
+                    <span id="selection" class="selection" hidden>選択中 <b id="n-selection">0</b> 字</span>
+                </p>
+            </section>
+
+            <section class="side">
+                <div class="limit" aria-labelledby="h-limit">
+                    <h2 id="h-limit" class="field-label">上限（任意）</h2>
+                    <div class="limit-row">
+                        <label class="visually-hidden" for="limit">上限の字数</label>
+                        <input id="limit" type="text" inputmode="numeric" autocomplete="off" placeholder="例: 400" aria-describedby="limit-status">
+                        <label class="visually-hidden" for="basis">上限の数え方</label>
+                        <select id="basis">
+                            <option value="chars">文字数</option>
+                            <option value="noNewline">改行を除く</option>
+                            <option value="noSpace">空白・改行を除く</option>
+                        </select>
+                    </div>
+                    <p id="limit-status" class="limit-status" data-state="none">上限を入れると、残りの字数が分かります。</p>
+                </div>
+
+                <details id="details" class="details">
+                    <summary>詳しい集計</summary>
+                    <div class="details-body">
+                        <h3>内訳</h3>
+                        <dl class="kv">
+                            <div><dt>改行数</dt><dd data-k="newlines">0</dd></div>
+                            <div><dt>コードポイント</dt><dd data-k="codePoints">0</dd></div>
+                            <div><dt>UTF-16 単位</dt><dd data-k="utf16">0</dd></div>
+                            <div><dt>UTF-8 バイト</dt><dd data-k="utf8Bytes">0</dd></div>
+                        </dl>
+                        <h3>字種（空白・改行を除く）</h3>
+                        <dl class="kv">
+                            <div><dt>ひらがな</dt><dd data-k="kinds.hiragana">0</dd></div>
+                            <div><dt>カタカナ</dt><dd data-k="kinds.katakana">0</dd></div>
+                            <div><dt>漢字</dt><dd data-k="kinds.kanji">0</dd></div>
+                            <div><dt>英字</dt><dd data-k="kinds.latin">0</dd></div>
+                            <div><dt>数字</dt><dd data-k="kinds.digit">0</dd></div>
+                            <div><dt>絵文字</dt><dd data-k="kinds.emoji">0</dd></div>
+                            <div><dt>記号・その他</dt><dd data-k="kinds.other">0</dd></div>
+                        </dl>
+                        <h3>全角・半角（簡易）</h3>
+                        <dl class="kv">
+                            <div><dt>全角</dt><dd data-k="widths.full">0</dd></div>
+                            <div><dt>半角</dt><dd data-k="widths.half">0</dd></div>
+                        </dl>
+                        <h3>X（旧 Twitter）換算</h3>
+                        <dl class="kv">
+                            <div><dt>換算</dt><dd id="x-count">0 / 280</dd></div>
+                            <div><dt>残り</dt><dd id="x-remaining">280</dd></div>
+                        </dl>
+                        <h3>原稿用紙（20×20）</h3>
+                        <dl class="kv">
+                            <div><dt>20字折返し</dt><dd id="g-sheets">0 枚（0 行）</dd></div>
+                            <div><dt>改行を除く文字数 ÷ 400</dt><dd id="g-simple">0 枚</dd></div>
+                        </dl>
+                        <p class="fine">Word・SNS・応募フォームなどの文字数と、数え方の違いで合わないことがあります。絵文字や結合文字は見た目の1文字、改行は1字として数えます。X 換算と原稿用紙は目安です（禁則処理は考慮しません）。</p>
+                    </div>
+                </details>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p><a href="https://edi-tool.github.io/">← edi-tool ツール一覧</a> | &copy; 2026 ISHIKAWA, Natsuki | MIT License</p>
+        <p class="fine">文章はブラウザ内だけで数え、外部には送信せず、保存もしません（保存するのは上限などの設定だけです）。Word ファイルを開くときだけ、読み取り用の部品（mammoth）を jsDelivr から読み込みます。</p>
+    </footer>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden>
+    <span id="toast-text"></span>
+    <button type="button" id="toast-action" class="toast-action" hidden></button>
+</div>
+</body>
 </html>
